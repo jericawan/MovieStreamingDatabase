@@ -9,11 +9,11 @@ This app lets you browse movies, rate them, track what you've watched, and manag
 ## Built With
 
 **Backend:** Java + Spring Boot + MySQL  
-**Frontend:** Just HTML, CSS, and vanilla JavaScript (no frameworks!)
+**Frontend:** Just HTML, CSS and vanilla JavaScript
 
 ## Running the App
 
-You'll need Java 17+, MySQL, and Maven installed.
+You'll need Java 17+, MySQL and Maven installed.
 
 ### Setup
 
