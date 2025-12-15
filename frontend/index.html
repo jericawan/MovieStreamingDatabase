@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieGo!</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="login-screen" class="login-container">
+    <div class="login-box">
+      <h1>Movie Go!</h1>
+      <h3>Your one-stop shop for all your movie desires.</h3>
+      <h2>Login</h2>
+      <form id="loginForm" onsubmit="login(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email:</label>
+          <input type="email" id="loginEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password:</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="login-btn">Login</button>
+        <div class="auth-links">
+          <a href="#" onclick="showRegister(event)">Create Account</a>
+          <span class="separator">|</span>
+          <a href="#" onclick="showForgotPassword(event)">Forgot Password?</a>
+        </div>
+      </form>
+      <div id="loginError" class="error-message"></div>
+      <form id="registerForm" style="display: none;" onsubmit="register(event)">
+        <h3 style="text-align: center; color: #667eea; margin-bottom: 20px;">Create Account</h3>
+        <div class="form-group">
+          <label for="regEmail">Email:</label>
+          <input type="email" id="regEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password:</label>
+          <input type="password" id="regPassword" placeholder="Create password" required>
+        </div>
+        <div class="form-group">
+          <label for="regConfirm">Confirm Password:</label>
+          <input type="password" id="regConfirm" placeholder="Confirm password" required>
+        </div>
+        <div class="form-group">
+          <label for="regPlan">Plan:</label>
+          <select id="regPlan" required>
+            <option value="">Select...</option>
+            <option value="SP1">Basic - $8.99</option>
+            <option value="SP2">Standard - $14.99</option>
+            <option value="SP3">Premium - $25.99</option>
+          </select>
+        </div>
+        <button type="submit" class="login-btn">Sign Up</button>
+        <div class="auth-links">
+          <a href="#" onclick="showLogin(event)">Back to Login</a>
+        </div>
+        <div id="registerError" class="error-message"></div>
+      </form>
+      <form id="forgotView" style="display: none;" onsubmit="resetPassword(event)">
+        <h3 style="text-align: center; color: #667eea; margin-bottom: 20px;">Reset Password</h3>
+        <div class="form-group">
+          <label for="resetEmail">Email:</label>
+          <input type="email" id="resetEmail" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="resetPassword">New Password:</label>
+          <input type="password" id="resetPassword" placeholder="Enter new password" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="resetConfirm">Confirm New Password:</label>
+          <input type="password" id="resetConfirm" placeholder="Confirm new password" required>
+        </div>
+        <button type="submit" class="login-btn">Reset Password</button>
+        <div class="auth-links">
+          <a href="#" onclick="showLogin(event)">Back to Login</a>
+        </div>
+        <div id="resetError" class="error-message"></div>
+      </form>
+    </div>
+  </div>
+  <div id="profile-screen" class="profile-container" style="display: none;">
+    <div class="profile-selection-box">
+      <h1>Who's watching?</h1>
+      <p class="profile-subtitle">Select your profile to continue</p>
+      <div id="profile-grid" class="profile-grid"></div>
+      <button class="add-profile-btn" onclick="showAddProfileForm()">+ Add New Profile</button>
+      <div id="add-profile-form" style="display: none; margin-top: 30px;">
+        <h3>Create New Profile</h3>
+        <form onsubmit="createNewProfile(event)">
+          <input type="text" id="newProfileName" placeholder="Profile Name" required maxlength="20">
+          <div style="margin-top: 15px;">
+            <button type="submit" class="profile-submit-btn">Create Profile</button>
+            <button type="button" class="profile-cancel-btn" onclick="hideAddProfileForm()">Cancel</button>
+          </div>
+        </form>
+        <div id="addProfileError" class="error-message"></div>
+      </div>
+      <button class="back-to-login-btn" onclick="backToLoginFromProfiles()">Back to Login</button>
+    </div>
+  </div>
+  <div class="container" id="main-app" style="display: none;">
+    <header>
+      <h1><span class="icon-movie">&#127916;</span> Movie Streaming App</h1>
+      <div class="auth-panel">
+        <span id="welcomeMessage">Welcome!</span>
+        <span id="roleBadge" class="role-badge"></span>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+        <button onclick="settings()" class="settings-btn">Settings</button>
+      </div>
+    </header>
+    <nav>
+      <button class="tab-btn active" onclick="showTab('movies')">Movies</button>
+      <button class="tab-btn" onclick="showTab('actors')">Actors</button>
+      <button class="tab-btn" onclick="showTab('ratings')">Ratings</button>
+      <button class="tab-btn admin-only" onclick="showTab('admin')" style="display: none;">Admin Panel</button>
+    </nav>
+    <div id="movies-tab" class="tab-content active">
+      <h2>Movies</h2>
+      <div class="controls">
+        <select id="movieSortType" onchange="sortMovies()">
+          <option value="title">Sort by Title</option>
+          <option value="year">Sort by Release Year</option>
+          <option value="length">Sort by Length</option>
+          <option value="rating">Sort by Rating</option>
+        </select>
+        <input type="text" id="searchTitle" placeholder="Search by title...">
+        <button onclick="searchMovies()">Search</button>
+        <button onclick="loadMovies()">Show All</button>
+      </div>
+      <div id="movies-list" class="content-list"></div>
+    </div>
+    <div id="actors-tab" class="tab-content">
+      <h2>Actors</h2>
+      <div class="controls">
+        <select id="actorSearchType" onchange="updateActorSearchPlaceholder()">
+          <option value="firstName">First Name</option>
+          <option value="lastName">Last Name</option>
+          <option value="movie">Movie Title</option>
+          <option value="birthYear">Birth Year</option>
+        </select>
+        <input type="text" id="actorSearchInput" placeholder="Enter first name...">
+        <button onclick="searchActors()">Search</button>
+        <button onclick="loadActors()">Show All</button>
+      </div>
+      <div id="actors-list" class="content-list"></div>
+    </div>
+    <div id="ratings-tab" class="tab-content">
+      <h2>Ratings & Reviews</h2>
+      <div class="controls">
+        <button onclick="showAddRatingModal()">+ Add Rating</button>
+        <button onclick="loadRatings()">Show All Ratings</button>
+      </div>
+      <div id="ratings-list" class="content-list"></div>
+    </div>
+    <div id="admin-tab" class="tab-content">
+      <h2>Admin Panel</h2>
+      <div class="admin-section">
+        <h3>Add New Movie</h3>
+        <form id="addMovieForm">
+          <p>Enter title of Movie:</p>
+          <input type="text" id="movieTitle" placeholder="Title" required>
+          <p>Enter Release Year:</p>
+          <input type="number" id="movieYear" placeholder="Year" required>
+          <p>Enter Studio Name:</p>
+          <input type="text" id="studioName" placeholder="Studio Name" required>
+          <p>Enter Length of Movie:</p>
+          <input type="number" id="movieLength" placeholder="Length (minutes)" required>
+          <button type="submit">Add Movie</button>
+        </form>
+      </div>
+      <div class="admin-section">
+        <h3>Add New Actor</h3>
+        <form id="addActorForm">
+          <p>Enter First Name:</p>
+          <input type="text" id="actorFirstName" placeholder="First Name" required>
+          <p>Enter Last Name:</p>
+          <input type="text" id="actorLastName" placeholder="Last Name" required>
+          <p>Enter Birthday:</p>
+          <input type="date" id="actorBirthDate" placeholder="Birth Date" required>
+          <p>Movies (optional):</p>
+          <input type="text" id="actorMovies" placeholder="Enter movie title(s), separated by commas">
+          <button type="submit">Add Actor</button>
+        </form>
+      </div>
+      <div class="admin-section">
+        <h3>Manage Accounts</h3>
+        <button onclick="loadAllAccounts()" style="margin-bottom: 15px;">Load All Accounts</button>
+        <div id="admin-accounts-list" class="accounts-list"></div>
+      </div>
+    </div>
+    <div id="statusMessage" class="status-message"></div>
+  </div>
+  <div id="addRatingModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add New Rating</h2>
+        <button class="close-btn" onclick="closeAddRatingModal()">&times;</button>
+      </div>
+      <form id="addRatingForm" onsubmit="submitNewRating(event)">
+        <div class="form-group">
+          <label>Select Movie:</label>
+          <select id="addRatingMovieSelect" required>
+            <option value="">Choose a movie...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rating (1-5):</label>
+          <input type="number" id="addRatingValue" min="1" max="5" required>
+        </div>
+        <div class="form-group">
+          <label>Review (optional):</label>
+          <textarea id="addReviewText" rows="5" placeholder="Write your review here..."></textarea>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-primary">Submit Rating</button>
+          <button type="button" class="btn-secondary" onclick="closeAddRatingModal()">Cancel</button>
+        </div>
+      </form>
+      <div id="addRatingError" class="error-message"></div>
+    </div>
+  </div>
+  <div id="editRatingModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Rating & Review</h2>
+        <button class="close-btn" onclick="closeEditRatingModal()">&times;</button>
+      </div>
+      <h3 id="editMovieTitle" style="text-align: center; color: palevioletred; margin-bottom: 20px;"></h3>
+      <form id="editRatingForm" onsubmit="submitEditRating(event)">
+        <div class="form-group">
+          <label>Rating (1-5):</label>
+          <input type="number" id="editRatingValue" min="1" max="5" required>
+        </div>
+        <div class="form-group">
+          <label>Review (optional):</label>
+          <textarea id="editReviewText" rows="5" placeholder="Write your review here..."></textarea>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-primary">Update Rating</button>
+          <button type="button" class="btn-secondary" onclick="closeEditRatingModal()">Cancel</button>
+        </div>
+      </form>
+      <div id="editRatingError" class="error-message"></div>
+    </div>
+  </div>
+  <div id="studioModal" class="modal">
+    <div class="modal-content">
+      <h2>Add new Studio</h2>
+      <p>The studio "<span id="studioNameDisplay"></span>" doesn't exist in the database.</p>
+      <p>Would you like to add it?</p>
+      <form id="addStudioModalForm">
+        <div class="form-group">
+          <label>Studio Name:</label>
+          <input type="text" id="newStudioName" readonly>
+        </div>
+        <div class="form-group">
+          <label>Address:</label>
+          <input type="text" id="newStudioAddress" placeholder="Enter studio address" required>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-primary">Add Studio</button>
+          <button type="button" class="btn-secondary" onclick="closeStudioModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="editMovieModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Movie</h2>
+        <button class="close-btn" onclick="closeEditMovieModal()">&times;</button>
+      </div>
+      <form id="editMovieForm" onsubmit="submitEditMovie(event)">
+        <input type="hidden" id="editMovieID">
+        <div class="form-group">
+          <label>Title:</label>
+          <input type="text" id="editMovieTitle" required>
+        </div>
+        <div class="form-group">
+          <label>Year:</label>
+          <input type="number" id="editMovieYear" min="1800" max="2100" required>
+        </div>
+        <div class="form-group">
+          <label>Length (minutes):</label>
+          <input type="number" id="editMovieLength" min="1" required>
+        </div>
+        <div class="form-group">
+          <label>Studio Name:</label>
+          <input type="text" id="editMovieStudio" placeholder="Enter studio name" required>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="btn-primary">Save Changes</button>
+          <button type="button" class="btn-secondary" onclick="closeEditMovieModal()">Cancel</button>
+        </div>
+      </form>
+      <div id="editMovieError" class="error-message"></div>
+    </div>
+  </div>
+  <div id="settingsModal" class="modal">
+    <div class="modal-content settings-modal">
+      <div class="modal-header">
+        <h2><span class="icon-settings">&#9881;</span> Account Settings</h2>
+        <button class="close-btn" onclick="closeSettings()">&times;</button>
+      </div>
+      <div class="settings-tabs">
+        <button class="settings-tab active" onclick="showSettingsTab('account')">Account</button>
+        <button class="settings-tab" onclick="showSettingsTab('subscription')">Subscription</button>
+        <button class="settings-tab" onclick="showSettingsTab('profiles')">Profiles</button>
+      </div>
+      <div id="settings-account" class="settings-tab-content active">
+        <h3>Change Password</h3>
+        <form id="changePasswordForm" onsubmit="changePassword(event)">
+          <div class="form-group">
+            <label>Current Password:</label>
+            <input type="password" id="currentPassword" required>
+          </div>
+          <div class="form-group">
+            <label>New Password:</label>
+            <input type="password" id="newPassword" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password:</label>
+            <input type="password" id="confirmPassword" required>
+          </div>
+          <button type="submit" class="btn-primary">Update Password</button>
+        </form>
+        <div id="passwordError" class="error-message"></div>
+        <hr style="margin: 30px 0;">
+        <h3>Account Information</h3>
+        <p><strong>Email:</strong> <span id="settingsEmail"></span></p>
+        <p><strong>Account Code:</strong> <span id="settingsAccountCode"></span></p>
+        <p><strong>Member Since:</strong> <span id="settingsCreatedDate"></span></p>
+      </div>
+      <div id="settings-subscription" class="settings-tab-content">
+        <h3>Current Subscription</h3>
+        <div id="currentPlanInfo" class="plan-info">
+          <div class="plan-card current-plan">
+            <h4 id="currentPlanName">Loading...</h4>
+            <p class="plan-price" id="currentPlanPrice">$0.00/month</p>
+            <p id="currentPlanDetails">0 profiles</p>
+          </div>
+        </div>
+        <h3 style="margin-top: 30px;">Available Plans</h3>
+        <div id="availablePlans" class="plans-grid"></div>
+      </div>
+      <div id="settings-profiles" class="settings-tab-content">
+        <h3>Manage Profiles</h3>
+        <div id="profilesList" class="profiles-list"></div>
+        <button class="btn-primary" onclick="showAddProfileInSettings()">+ Add New Profile</button>
+        <div id="addProfileInSettings" style="display: none; margin-top: 20px;">
+          <form onsubmit="addProfileInSettings(event)">
+            <div class="form-group">
+              <label>Profile Name:</label>
+              <input type="text" id="settingsNewProfileName" placeholder="Profile Name" required maxlength="20">
+            </div>
+            <button type="submit" class="btn-primary">Create</button>
+            <button type="button" class="btn-secondary" onclick="hideAddProfileInSettings()">Cancel</button>
+          </form>
+          <div id="addProfileSettingsError" class="error-message"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
