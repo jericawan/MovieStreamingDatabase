@@ -1,6 +1,6 @@
 # Movie Streaming App
 
-A full-stack web app for managing a movie streaming service database. Built for my database systems course project.
+A full-stack web app for managing a movie streaming service database. Built for my database final project.
 
 ## What It Does
 
@@ -40,12 +40,12 @@ Log in as admin to access the full dashboard:
 
 The app has two main parts:
 
-**Backend (Spring Boot REST API)**
+**Backend (Spring Boot)**
 - Handles all the database operations
 - Enforces user permissions (admins vs regular users)
 - Auto-generates movie codes, actor codes, etc. using MySQL triggers
 
-**Frontend (Single Page App)**
+**Frontend**
 - Profile selection screen for users with multiple profiles
 - Movie browsing with studio names and watch progress
 - Rating system where you can review movies
@@ -87,4 +87,4 @@ moviestreamingapp/
 
 ## Author
 
-Built by Jerica Wan (final project)
+Built by Jerica Wan
